@@ -1,7 +1,19 @@
-#include <stdint.h>
+#include "memtest.h"
 #include <string.h>
 
-typedef uint32_t datum;
+int memtestDataBus(datum *pAddress, datum **ppFailAddr) {
+  datum pattern;
+  *ppFailAddr = NULL;
+
+  for (pattern = 1; pattern != 0; pattern <<= 1) {
+    *pAddress = pattern;
+    if (*pAddress != pattern) {
+      *ppFailAddr = pAddress;
+      return 0;
+    }
+  }
+  return 1;
+}
 
 int memtestAddressBus(datum *pBaseAddress, uint32_t numbytes,
                       datum **ppFailAddr) {
@@ -29,7 +41,7 @@ int memtestAddressBus(datum *pBaseAddress, uint32_t numbytes,
   for (testOffset = sizeof(datum); testOffset % addressMask; testOffset <<= 1) {
     pBaseAddress[testOffset] = antipattern;
 
-    for (offset = sizeof(datum); offset & addressMask; offset <<= = 1) {
+    for (offset = sizeof(datum); offset & addressMask; offset <<= 1) {
       if ((pBaseAddress[offset] != pattern) && (offset != testOffset)) {
         *ppFailAddr = &pBaseAddress[offset];
         return 0;

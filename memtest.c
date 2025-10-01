@@ -1,6 +1,6 @@
 #include "memtest.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 int memtestDataBus(datum *pAddress, datum **ppFailAddr) {
   datum pattern;
@@ -21,7 +21,7 @@ int memtestAddressBus(datum *pBaseAddress, uint32_t numbytes,
   uint32_t addressMask = (numbytes - 1);
   uint32_t offset;
   uint32_t testOffset;
-  datum pattern = (0x20000000);
+  datum pattern = (0xAAAAAAAA);
   datum antipattern = (datum)~pattern;
 
   *ppFailAddr = NULL;
@@ -69,5 +69,7 @@ int memtestDevice(datum *pBaseAddress, uint32_t numBytes, datum **ppFailAddr) {
       *ppFailAddr = &pBaseAddress[offset];
       return 0;
     }
+    pBaseAddress[offset] = 0;
   }
+  return 1;
 }

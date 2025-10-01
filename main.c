@@ -1,8 +1,8 @@
 #include "led.h"
 #include "memtest.h"
 
-#define BASE_ADDRESS (datum *)(0x00500000)
-#define NUM_BYTES (0x10000)
+#define BASE_ADDRESS (datum *)(0x20000000)
+#define NUM_BYTES (20 * 1024)
 
 int main() {
   datum *pFailAddr;
@@ -12,11 +12,14 @@ int main() {
 
   if ((memtestDataBus(BASE_ADDRESS, &pFailAddr) != 1) ||
       (memtestAddressBus(BASE_ADDRESS, NUM_BYTES, &pFailAddr) != 1) ||
-      (memTestDevice(BASE_ADDRESS, NUM_BYTES, &pFailAddr) != 1)) {
+      (memtestDevice(BASE_ADDRESS, NUM_BYTES, &pFailAddr) != 1)) {
     ledOn();
-    return 0;
+    while (1) {
+    };
   } else {
-    ledOn();
-    return 1;
+    while (1) {
+      ledToggle();
+      delay_ms(500);
+    }
   }
 }
